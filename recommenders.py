@@ -1,4 +1,4 @@
-def trending_recos(timestamp_split,data,userid):
+def trending_recos(timestamp_split,data,userid=None):
     '''
     Provide top trending news recommendation for a user on a certain timestamp
     :param timestamp (timestamp): the timestamp on which we ask recommendations
@@ -14,17 +14,17 @@ def trending_recos(timestamp_split,data,userid):
             if t < timestamp_split:
                 for n in data[k][t]['past_clicks']:
                     if n not in news_clicks.keys():
-                        news_clicks[n ] =[]
+                        news_clicks[n] =[]
                     news_clicks[n].append(k)
                     if k not in user_news_seen.keys():
-                        user_news_seen[k ] =[]
+                        user_news_seen[k] =[]
                     user_news_seen[k].append(n)
 
     # calculate the unique users per news element and give back the sorted list of news by number of users
     # which will be the base for the final recos
     recos ={}
     for n in news_clicks.keys():
-        news_clicks[n ] =list(set(news_clicks[n]))
+        news_clicks[n] =list(set(news_clicks[n]))
         recos[n] =len(news_clicks[n])
 
     for u in user_news_seen.keys():
@@ -33,8 +33,8 @@ def trending_recos(timestamp_split,data,userid):
     # sort the dictionary which will provide the recommendations
     recos ={k: v for k, v in sorted(recos.items(), key=lambda item: item[1] ,reverse=True)}
 
-    # filter out all news that a user has already consumed if he has already history
-    if userid in user_news_seen.keys():
+    # if userid is defined filter out all news that a user has already consumed if he has already history
+    if userid and userid in user_news_seen.keys():
         for n in user_news_seen[userid]:
             recos.pop(n)
 
