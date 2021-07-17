@@ -1,10 +1,9 @@
-
 def trending_recos(timestamp_split,data,userid):
     '''
-    Provide top item recommendation for a given timestamp
+    Provide top trending news recommendation for a user on a certain timestamp
     :param timestamp (timestamp): the timestamp on which we ask recommendations
     :param data (dict): user data on past clicks
-    :return: recos(list): sorted recommendations
+    :return: recos(dict): sorted dict with newsids and number of users which have consumed it
     '''
 
     # create a list to store the users each news element has
@@ -34,12 +33,12 @@ def trending_recos(timestamp_split,data,userid):
     # sort the dictionary which will provide the recommendations
     recos ={k: v for k, v in sorted(recos.items(), key=lambda item: item[1] ,reverse=True)}
 
-    # filter out all news that a user has already consumed
-    for n in user_news_seen[userid]:
-        recos.pop(n)
+    # filter out all news that a user has already consumed if he has already history
+    if userid in user_news_seen.keys():
+        for n in user_news_seen[userid]:
+            recos.pop(n)
 
     return recos
-
 
 
 def implicit_recos():
@@ -52,6 +51,7 @@ def implicit_recos():
 
 
     return recos
+
 
 
 
