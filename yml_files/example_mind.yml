@@ -1,0 +1,25 @@
+datapaths:
+  user_item_ratings: datasets/MIND/data/ratings.csv
+  user_features:
+  item_features:
+
+split_per: 0.2
+top_k: 10
+temporal: True
+
+models:
+
+#takes 20 minutes for a combination
+#  SVD:
+#    parameters:
+#      singular_values_n: [50]
+
+  Popular:
+    parameters:
+
+  iALS:
+    parameters:
+      reg: [0.05]
+      factors: [50]
+      iter: [2,5]
+      log: [True]
