@@ -28,9 +28,9 @@ class Splitter:
         if len(col_intersection) < 4:
             raise ValueError('''Following column names should exist in user_item_ratings
             :userid,itemid,rating,timestamp. Rename your df accordingly''')
-        if self.user_features:
+        if self.user_features is not None:
             if 'userid' not in self.user_features.columns:
                 raise ValueError('userid should exist as a column in user_features')
-        if self.item_features:
-            if 'itemid' not in self.user_features.columns:
+        if self.item_features is not None:
+            if 'itemid' not in self.item_features.columns:
                 raise ValueError('itemid should exist as a column in item_features')
