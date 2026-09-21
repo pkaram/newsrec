@@ -51,20 +51,18 @@ class iALS(RecommenderBase):
         else:
             data_train['rating'] = data_train['rating'] * self.alpha + 1
 
-        sparse_item_user = sparse.csr_matrix((data_train['rating'].astype(float),
-                                              (data_train['itemid_code'], data_train['userid_code'])))
         sparse_user_item = sparse.csr_matrix((data_train['rating'].astype(float),
                                               (data_train['userid_code'], data_train['itemid_code'])))
-
-        data_conf = sparse_item_user.astype('double')
 
         #define model with parameters provided
         model = implicit.als.AlternatingLeastSquares(factors=self.factors,
                                                      regularization=self.reg,
                                                      iterations=self.iter)
-        model.fit(data_conf)
+        model.fit(sparse_user_item.astype('double'))
 
-        recos_raw = model.recommend_all(sparse_user_item, filter_already_liked_items=True)
+        userids = np.arange(sparse_user_item.shape[0])
+        recos_raw, _ = model.recommend(userids, sparse_user_item, N=self.top_k,
+                                       filter_already_liked_items=True)
         recos_raw = pd.DataFrame(recos_raw)
         recos = pd.DataFrame()
         for j in range(0,recos_raw.shape[1]):

@@ -55,7 +55,7 @@ class SVD(RecommenderBase):
         data_test = pd.merge(data_test, df_codes, on=['itemid_code'], how='left')
 
         max_items_reviewed = data_train[['userid','itemid']].drop_duplicates()
-        max_items_reviewed = max_items_reviewed.userid.value_counts()[0]
+        max_items_reviewed = max_items_reviewed.userid.value_counts().max()
         data_test = data_test.sort_values(['userid', 'rating_pred'], ascending=[False, False])
         data_test['rank_index'] = data_test.groupby(['userid']).cumcount()
         data_test = data_test.groupby(['userid_code']).head(self.top_k + max_items_reviewed)

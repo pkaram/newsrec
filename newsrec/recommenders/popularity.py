@@ -23,7 +23,7 @@ class Popular(RecommenderBase):
         data_train = self.data.data_train
 
         max_items_reviewed = data_train[['userid','itemid']].drop_duplicates()
-        max_items_reviewed = max_items_reviewed.userid.value_counts()[0]
+        max_items_reviewed = max_items_reviewed.userid.value_counts().max()
 
         top_items = data_train.groupby('itemid')['userid'].count().reset_index()
         top_items.columns = ['itemid', 'cnt']

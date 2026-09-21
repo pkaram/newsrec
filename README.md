@@ -3,8 +3,16 @@
 **work in progress**
 
 This is a framework to experiment on recommendations related to news to users based on past behavior. An experiment can 
-be set by defining a yaml file for the settings, algorithms and parameters to be tested. The yaml file has
-the following structure
+be set by defining a yaml file for the settings, algorithms and parameters to be tested.
+
+Python 3.12 and dependencies are managed with [uv](https://docs.astral.sh/uv/). From the repo root:
+
+```
+uv sync
+```
+
+Then run scripts with `uv run python ...`. The yaml file has the following structure
+
 
 ### Yaml File Structure
 
@@ -54,23 +62,22 @@ run_config('yml_files/your_configuration.yml')
 ```
 and then simply run:
 ```
-python run_experiment.py
+uv run python run_experiment.py
 ```
 
-The run will provide print results for all models and parameter combinations that have been given. It will also save 
-them in a txt file in *metadata* directory which will be created after 1st experiment.
+The run will print results for all models and parameter combinations, then a summary table.
+It also saves JSON lines and a CSV table in the *metadata* directory, which is created after the first experiment.
 
 ## Example
 
-Download the following dataset [MIND: Microsoft News Recomendation Dataset](https://www.kaggle.com/arashnic/mind-news-dataset), 
-create a 'datasets/MIND' folder to save the data and execute the following 
+`mind_prepare_dataset.py` downloads MIND-small train if `datasets/MIND/behaviors.tsv` is missing, then writes `datasets/MIND/data/ratings.csv`. You can also place the Kaggle [MIND](https://www.kaggle.com/arashnic/mind-news-dataset) files in `datasets/MIND` yourself.
 
 ```
-python mind_prepare_dataset.py
+uv run python mind_prepare_dataset.py
 ```
 
 This will create *datasets/MIND/data/ratings.csv* file which can be used to run *yml_files/example_mind.yml* experiment configuration:
 
 ```
-python run_example_mind.py
+uv run python run_example_mind.py
 ```

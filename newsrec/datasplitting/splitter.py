@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class Splitter:
     def __init__(self, data, user_features=None, item_features=None, temporal=True, split_per=0.2):
         self.data = data
@@ -19,9 +16,9 @@ class Splitter:
 
         if self.temporal:
             data = data.sort_values(by=['timestamp'])
-            self.data_train, self.data_test = np.split(data, [int((1-self.split_per)*len(data))])
-        else:
-            self.data_train, self.data_test = np.split(data, [int((1-self.split_per)*len(data))])
+        split_idx = int((1 - self.split_per) * len(data))
+        self.data_train = data.iloc[:split_idx].copy()
+        self.data_test = data.iloc[split_idx:].copy()
 
     def validate_datasets(self):
         col_intersection = list(set(['userid','itemid','rating','timestamp']) & set(list(self.data.columns)))

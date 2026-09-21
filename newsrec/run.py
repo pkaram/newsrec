@@ -65,11 +65,14 @@ def run_config(config_path=None):
 
         print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Run for model {m} completed")
 
-    #print("=====================RESULTS==========================")
-    #print(results)
+    results_table = mthandler.write_results_table(results)
+    print("=====================RESULTS==========================")
+    print(results_table.to_string(index=False))
     print("======================================================")
     print(f"Results can be found in: {mthandler.file}")
+    print(f"Results table: {mthandler.table_file}")
     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Run  completed")
+
 
 
 if __name__ == '__main__':
