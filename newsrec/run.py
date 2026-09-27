@@ -3,11 +3,11 @@ from datetime import datetime
 from itertools import product
 from pprint import pprint
 
-from .dataloader import dataloader
-from .datasplitting import splitter
-from .object_mappings import model_mappings
-from .evaluation import evaluation
-from .metadatahandler import datahandler
+from newsrec.dataloader import dataloader
+from newsrec.datasplitting import splitter
+from newsrec.object_mappings import model_mappings
+from newsrec.evaluation import evaluation
+from newsrec.metadatahandler import datahandler
 
 
 def run_config(config_path=None):

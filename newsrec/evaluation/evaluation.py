@@ -10,6 +10,7 @@ class Evaluator:
         self.user_coverage = None
         self.precision = None
         self.map = None
+        self.ndcg = None
 
     def calculate_metrics(self):
         ##there should be some explanation on the values and the logic
@@ -17,13 +18,15 @@ class Evaluator:
         self.calc_user_coverage()
         self.calc_precision()
         self.calc_map()
+        self.calc_ndcg()
 
     def metrics(self):
         return {
             'item_coverage': self.item_coverage,
             'user_coverage': self.user_coverage,
             'precision': self.precision,
-            'map': self.map
+            'map': self.map,
+            'ndcg': self.ndcg
         }
 
     def calc_item_coverage(self):
@@ -81,3 +84,38 @@ class Evaluator:
         recs_available = recs_available.reset_index()
         recs_available['AP'] = recs_available['AP'] / recs_available['itemid']
         self.map = np.sum(recs_available['AP']) / recs_available.shape[0]
+
+    def calc_ndcg(self):
+        """
+        Normalized Discounted Cumulative Gain.
+        A hit at rank r contributes 1 / log2(r + 2). Rank 0 is the first
+        position, so its discount is 1. Each user is divided by the gain
+        of placing that user's test items in the best possible order.
+        """
+        recs_available = self.recos.sort_values(['userid', 'rank'])
+        if recs_available.empty:
+            self.ndcg = 0.0
+            return
+
+        recs_interacted = self.data_test[['userid', 'itemid']].drop_duplicates()
+        recs_interacted['interaction'] = 1
+        recs_available = recs_available.merge(recs_interacted, on=['userid', 'itemid'], how='left')
+        recs_available['interaction'] = recs_available['interaction'].fillna(0)
+        recs_available['gain'] = recs_available['interaction'] / np.log2(recs_available['rank'] + 2)
+
+        per_user = recs_available.groupby('userid').agg(dcg=('gain', 'sum'), k=('itemid', 'count'))
+        per_user = per_user.reset_index()
+        n_relevant = self.data_test[['userid', 'itemid']].drop_duplicates()
+        n_relevant = n_relevant.groupby('userid').size().rename('n_relevant')
+        per_user = per_user.merge(n_relevant, on='userid', how='left')
+        per_user['n_relevant'] = per_user['n_relevant'].fillna(0)
+
+        max_k = int(per_user['k'].max())
+        # ideal_at_n[n - 1] is the gain of n hits in the first n positions
+        ideal_at_n = np.cumsum(1.0 / np.log2(np.arange(1, max_k + 1) + 1))
+        n_ideal = np.minimum(per_user['n_relevant'].to_numpy(), per_user['k'].to_numpy()).astype(int)
+        idcg = np.zeros(len(n_ideal))
+        has_relevant = n_ideal > 0
+        idcg[has_relevant] = ideal_at_n[n_ideal[has_relevant] - 1]
+        per_user['ndcg'] = np.where(idcg > 0, per_user['dcg'] / idcg, 0.0)
+        self.ndcg = np.sum(per_user['ndcg']) / per_user.shape[0]

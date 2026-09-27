@@ -42,6 +42,23 @@ models:
       factors: [50]
       iter: [2,5]
       log: [True]
+
+  BPR:
+    parameters:
+      factors: [50]
+      learning_rate: [0.01]
+      reg: [0.01]
+      iter: [100]
+      random_state: [42]
+
+  ItemKNN:
+    parameters:
+      neighbors: [20]
+      similarity: [cosine] # cosine, tfidf, or bm25
+
+  EASE:
+    parameters:
+      lamb: [500]
 ```
 
 

@@ -1,4 +1,4 @@
-from .recommender_base import RecommenderBase
+from newsrec.recommenders.recommender_base import RecommenderBase
 from scipy.sparse.linalg import svds
 import numpy as np
 import pandas as pd
