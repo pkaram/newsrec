@@ -1,4 +1,4 @@
-from .recommender_base import RecommenderBase
+from newsrec.recommenders.recommender_base import RecommenderBase
 import scipy.sparse as sparse
 import implicit
 import pandas as pd

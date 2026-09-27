@@ -28,16 +28,15 @@ class DataHandler:
                 'description': result.get('description'),
             }
             params = result.get('model_params')
-            if isinstance(params, dict):
-                row.update(params)
+            row['params'] = params if isinstance(params, dict) else {}
             metrics = result.get('eval_metrics') or {}
             for name, value in metrics.items():
                 row[name] = float(value) if hasattr(value, 'item') else value
             rows.append(row)
 
         df = pd.DataFrame(rows)
-        front = ['model', 'description']
-        metric_cols = ['item_coverage', 'user_coverage', 'precision', 'map']
+        front = ['model', 'description', 'params']
+        metric_cols = ['item_coverage', 'user_coverage', 'precision', 'map', 'ndcg']
         other = [c for c in df.columns if c not in front + metric_cols]
         ordered = front + other + [c for c in metric_cols if c in df.columns]
         df = df[ordered]

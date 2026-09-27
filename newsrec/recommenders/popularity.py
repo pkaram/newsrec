@@ -1,4 +1,4 @@
-from .recommender_base import RecommenderBase
+from newsrec.recommenders.recommender_base import RecommenderBase
 
 
 class Popular(RecommenderBase):
